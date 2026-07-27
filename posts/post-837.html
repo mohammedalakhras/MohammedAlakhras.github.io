@@ -3,39 +3,76 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>‼️ | محمد بن عبد المنعم الأخرس</title>
-  <meta name="description" content="‼️
- هام 
-‼️
-#اعتقاد">
+  <title>‼️ | مُحَمَّد الأخْرَس</title>
+  <meta name="description" content="‼️  هام  ‼️ #اعتقاد">
   <link rel="canonical" href="https://mohammedalakhras.github.io/posts/post-837.html">
+  
+  <!-- Open Graph & Social SEO -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="‼️">
+  <meta property="og:description" content="‼️  هام  ‼️ #اعتقاد">
+  <meta property="og:image" content="https://telegram.org/img/t_logo.png">
+  <meta property="og:url" content="https://mohammedalakhras.github.io/posts/post-837.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="‼️">
+  <meta name="twitter:description" content="‼️  هام  ‼️ #اعتقاد">
+  <meta name="twitter:image" content="https://telegram.org/img/t_logo.png">
+
   <style>
     :root { --bg: #0f172a; --card-bg: #1e293b; --border: #334155; --text: #f8fafc; --accent: #38bdf8; --muted: #94a3b8; }
-    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); padding: 20px; line-height: 1.8; margin: 0; }
-    .container { max-width: 800px; margin: 40px auto; background: var(--card-bg); padding: 30px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 20px; line-height: 1.8; margin: 0; }
+    .container { max-width: 820px; margin: 20px auto; }
+    
+    /* Dynamic Channel Header */
+    .channel-header { text-align: center; background: var(--card-bg); padding: 25px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+    .channel-logo { width: 85px; height: 85px; border-radius: 50%; border: 3px solid var(--accent); margin-bottom: 12px; object-fit: cover; }
+    .channel-title { font-size: 1.6rem; margin: 0 0 8px 0; color: var(--text); }
+    .channel-desc { color: var(--muted); font-size: 0.95rem; max-width: 650px; margin: 0 auto 15px auto; line-height: 1.6; }
+    .channel-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+    
+    /* Post Box */
+    .post-box { background: var(--card-bg); padding: 30px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
     .nav-back { color: var(--accent); text-decoration: none; font-weight: bold; display: inline-block; margin-bottom: 20px; }
     .nav-back:hover { text-decoration: underline; }
-    h1 { font-size: 1.5rem; color: var(--accent); margin-top: 0; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-    .meta { font-size: 0.85rem; color: var(--muted); margin-bottom: 25px; display: flex; gap: 15px; flex-wrap: wrap; }
+    
+    .post-meta-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; margin-bottom: 20px; border-bottom: 1px solid var(--border); font-size: 0.88rem; color: var(--muted); }
     .badge { background: #0284c7; color: #fff; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
-    .content { font-size: 1.1rem; color: #e2e8f0; white-space: pre-wrap; word-break: break-word; }
-    .actions { margin-top: 35px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; gap: 15px; flex-wrap: wrap; }
-    .btn { background: var(--accent); color: #0f172a; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: all 0.2s; }
-    .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+    
+    .forwarded-badge { background: #1e3a8a; color: #93c5fd; padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; margin-bottom: 20px; border-right: 4px solid var(--accent); }
+    .forwarded-badge a { color: #ffffff; font-weight: bold; text-decoration: underline; }
+    
+    .post-media { margin: 20px 0; text-align: center; }
+    .post-media img, .post-media video { max-width: 100%; border-radius: 8px; max-height: 500px; border: 1px solid var(--border); }
+    .post-media audio { width: 100%; margin-top: 10px; }
+    
+    .post-text-body { font-size: 1.1rem; color: #e2e8f0; white-space: pre-wrap; word-break: break-word; line-height: 1.8; }
+    
+    .post-actions { margin-top: 35px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn { padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 0.9rem; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary { background: var(--accent); color: #0f172a; }
+    .btn-secondary { background: #334155; color: var(--text); border: 1px solid var(--border); }
+    .btn:hover { opacity: 0.9; transform: translateY(-1px); }
   </style>
+
+  <!-- Structured Data JSON-LD for Google -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": "‼️",
-    "articleBody": "‼️
- هام 
-‼️
-#اعتقاد",
+    "description": "‼️  هام  ‼️ #اعتقاد",
     "datePublished": "2025-09-01",
     "author": {
       "@type": "Person",
-      "name": "محمد بن عبد المنعم الأخرس"
+      "name": "مُحَمَّد الأخْرَس"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "مُحَمَّد الأخْرَس",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://telegram.org/img/t_logo.png"
+      }
     },
     "mainEntityOfPage": "https://mohammedalakhras.github.io/posts/post-837.html"
   }
@@ -43,16 +80,33 @@
 </head>
 <body>
   <div class="container">
-    <a href="../archive.html" class="nav-back">← العودة لأرشيف القناة</a>
-    <h1>‼️</h1>
-    <div class="meta">
-      <span>تاريخ النشر: 2025-09-01</span>
-      <span class="badge">منشور #837</span>
-    </div>
-    <div class="content"><div class="tgme_widget_message_text js-message_text" dir="auto"><i class="emoji" style="background-image:url('//telegram.org/img/emoji/40/E280BC.png')"><b>‼️</b></i> هام <i class="emoji" style="background-image:url('//telegram.org/img/emoji/40/E280BC.png')"><b>‼️</b></i><br/><a href="?q=%23%D8%A7%D8%B9%D8%AA%D9%82%D8%A7%D8%AF">#اعتقاد</a></div></div>
-    <div class="actions">
-      <a href="https://t.me/MohammedAlakhras/837" target="_blank" class="btn">✈️ مشاهدة المنشور في تيليغرام</a>
-    </div>
+    <a href="../archive.html" class="nav-back">← العودة للأرشيف الرئيسي</a>
+    
+    <!-- Dynamic Header -->
+    <header class="channel-header">
+      <img src="https://telegram.org/img/t_logo.png" class="channel-logo" alt="مُحَمَّد الأخْرَس">
+      <h1 class="channel-title">مُحَمَّد الأخْرَس</h1>
+      <p class="channel-desc">ℹ️ Muslim (Athari) | SWE | MSc @ Homs University | Hama.📌 كل ما يُنشر متاح لأخذه دون ذكر المصدر.📌 التواصل على رسائل القناة لأمور تخص القناة فقط (تصويب، توجيه، استفسار، نصح، ترشيح،..)، أما الأمور الخاصة فعلى حسابي الشخصي حصرًا:@Mohammed_Alakhras</p>
+      <div class="channel-actions">
+        <a href="https://t.me/MohammedAlakhras" target="_blank" rel="noopener" class="btn btn-primary">✈️ فتح القناة في تيليغرام</a>
+        <a href="https://t.me/s/MohammedAlakhras" target="_blank" rel="noopener" class="btn btn-secondary">👁️ معاينة القناة في الويب</a>
+      </div>
+    </header>
+
+    <!-- Post Article -->
+    <article class="post-box">
+      <div class="post-meta-bar">
+        <span>تاريخ النشر: 2025-09-01</span>
+        <span class="badge">منشور #837</span>
+      </div>
+      
+      <div class="content"><div class="post-media"><img src="https://cdn4.telesco.pe/file/fzwnegTsy5h4H6Pt0bSjnSBJ4XqwPJ-EV9lU1tgL00DYIgRoOJPBl6DDJJVlGeZRgXcyu1rnZErzu57TzaowMdfdHWhkfxGhnLyRSpfM7Q-nVYhEkIumEPh8dLtuPijtd5Pyjn6qcvYwtiKe2jc2yA8lVLlMmEy7avCB_P2bxrao8liwUZ8CJaroMw2uzQQ7SEfrrmdkqN9PkVzVxqFKy7bcNSYVaKlwHFj6DNqAZttj5pbcQVhW2U2_BbmmU4UxPXh3E6niDV3Z_7lmWMcnXEJGCJeXa5J_2SGa3xVwwh3FIYjcbj5LJK0MQ2Jqdd6NKJFKZF2DFOy6lkw-O7M-1g.jpg" alt="صورة المنشور #837" loading="lazy" /></div><div class="post-media"><img src="https://cdn4.telesco.pe/file/un4SXEOkIO_A-EdlSR-88fypCFMP_zKljDqgq6r6ILTQSv6Ze8eh-9zm4Eo5dvMBckpTffxZ66xq8ccYHj7C4jHlbagRo6LaO4nrGUiqkrS9fM5dCfCdt3Dlgk3WP-1oideVqvdceg2j1IrWZX5fvJ17Ft-Xz1X0RrRDpkiSOlsxgPPFsejbe5IDfHF8WdWzS73qYXzuaJoXx3QA6MPN-SX9KIBSwLYlRHG6t43XmTt90KW2-Vv6sUWnxARWMKkZNy3etUC1p-q-VSCKizFEwUOwUEa5_RXAKhg1minyEkXb4sP-Y7UlBdKPHhzSrn0e8uWH9tm_6VLaAjD_x4EB-A.jpg" alt="صورة المنشور #837" loading="lazy" /></div><div class="post-media"><img src="https://cdn4.telesco.pe/file/dg4d-sWHAKHwu9paV_rIDgGtS06GhUuaibnxDrEY32pz2YGm7eOo9sdvX9nvAQ9hDEFVWJnbWTKMHIijp3U8ebeOhu3Fxsamw-9xJyiNa04mFQk9b17utUIpf_dVSa5u7qKwy2BFvzSvaIwt3m1PY9nbG7nR4Ombgnwh2ZQCGEAQgmLkbD0MsnbETWdkC0BalfFncB4yvlkdGm4h6DCH55SuEMUYFoUFMiL6_1O1KMy32CtvSZ00C9kQAPPYs40OVsSxIESHpyr9frxaIoiboodofY5FaN8I8M6FVxWjreV16uFGTHRVPwtz8nU5oxKfwjf86Azbj0phiV008zdDXg.jpg" alt="صورة المنشور #837" loading="lazy" /></div><div class="post-media"><img src="https://cdn4.telesco.pe/file/Ndc81esPXWU-qYHlnGVu4PyT9b4pnbmOR43ageb2J3s1UiboIRqHqzXOoQAFblAWHdqi0amVS9bzYlIPD78j8VT9ovxUGBhIUO3gU-Auk1ujOOBIMeBikxuRXgOcCx5QsJN_HVLW0BK26_k1gpcbiSXwhPVK3TnYnJjBlejZjSZmLigDa4Ih_I54YSF9lUvONA_tvsSG1Zg6fyr84qgnZUO5s5tfBLiFs-iXIPpv52x6OhgpD2KDu33QNvycZooSUfms7skUwZ3rdmNfPSft_J6AiCKJH9X1ub_RfywP2PCRMvGwZBTW8Z7rgMveR8QuboXxbOBbLL7JNhaVD8b1XA.jpg" alt="صورة المنشور #837" loading="lazy" /></div><div class="post-media"><img src="https://cdn4.telesco.pe/file/a0aAjAJ_Ndj6Yu0eZ8wusPgEAaryOtWmLKYX2sRCbHR2BjuGsPzs398DWqrSVmt6H9q4SbI11g6yOyG91mabDRvyjaqXZjRBqxg9DZoqDi3w8pTdfP7lwjREBoUL9b3uZP_iFE0X849ZgT9-PfIs2QdB_SOqPoXN69Rc3o6hPsXBxUaAV-hHs0gGQ5A5vNofYAC1kEORFlO5s8cLh7FjEL9gveQnD8JcuEznE8lVb7IThwF_SDpb_XaKBf4WkwfoGtU2Qe-UfORhY6nzgA3Haz9jAq9AFAdLacN-SfcFzg-fkJJGd_UHUvwiWVElZBwY-XXaCn3X4TjfI0lyv50W5w.jpg" alt="صورة المنشور #837" loading="lazy" /></div><div class="post-media"><img src="https://cdn4.telesco.pe/file/CCtGRhDkgLHGXPAf8Gup8caXmZCVVLjEgahkpF-oY6BrSbHa5C9Q-NSeLm_GIGh3KW7PnhtPBSo33zBgp64m68ZdMdIz-01JTfGf6Ex4jvKltx675oi5m4ckqTY2wSFK24vgKq-TtA0zgemIcEEBKCN7T38DhDG8HYOhmeT3aVq-Kx2N0UuPhesf-kOK7NdwQ8oQMS21CDlvLiEr03v9fmqIS2qTdpZ_jZK-Q1SaiSfMnWv1SaIuMityPKxNvi3doiLeH0FPEHK3i_Qofl8EhkZPrsuJLS69UPPfLJCe8Et7FlO0vbzq5QR2H_xN_SIqd1N2VjkB7RvK_5copLwGng.jpg" alt="صورة المنشور #837" loading="lazy" /></div><div class="post-media"><img src="https://cdn4.telesco.pe/file/HQPR0PkTIetGL_xZtK69DYc4d3hx3HHdkx_ca5B20HNlsOtZZac19JKgPieGbhIK6bc0kC7WhenoGiGg0ILA2wFwkxdkCmxtqW7-hHRxfMcmboK0xqSC6dURyJzFTmC71efmDg6kctt90Yh5Co4dTgcmg3xM4UwYFTpEvxwStHzmjM_Qt7bcq8gpdWHTOAkPi1DuJNHJGsxEAfMEg-MfwdysdGgi7eCdI42c-a1wRUeeLs3HQXIRCobfvz3BPQmZE5IFo-53CX3fk4oe0K_vdi88rYd6Nh75liJrW8BIM-wj3Oa2fVtjP2igudXreF0HM7wMAQ2tGnUXYRfjqJSL2g.jpg" alt="صورة المنشور #837" loading="lazy" /></div><div class="post-text-body"><div class="tgme_widget_message_text js-message_text" dir="auto"><i class="emoji" style="background-image:url('//telegram.org/img/emoji/40/E280BC.png')"><b>‼️</b></i> هام <i class="emoji" style="background-image:url('//telegram.org/img/emoji/40/E280BC.png')"><b>‼️</b></i><br/><a href="?q=%23%D8%A7%D8%B9%D8%AA%D9%82%D8%A7%D8%AF">#اعتقاد</a></div></div></div>
+      
+      <div class="post-actions">
+        <a href="https://t.me/MohammedAlakhras/837" target="_blank" rel="noopener" class="btn btn-primary">✈️ مشاهدة على تيليغرام</a>
+        <a href="https://t.me/s/MohammedAlakhras/837" target="_blank" rel="noopener" class="btn btn-secondary">👁️ معاينة المنشور</a>
+      </div>
+    </article>
   </div>
 </body>
 </html>
