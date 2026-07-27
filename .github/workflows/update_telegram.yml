@@ -1,0 +1,32 @@
+name: Update Telegram Archive
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # يعمل تلقائياً كل يوم الساعة 12 منتصف الليل
+  workflow_dispatch: # يتيح لك تشغيله يدوياً بنقرة زر من GitHub
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Dependencies
+        run: pip install beautifulsoup4
+
+      - name: Run Build Script
+        run: python build_archive.py
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add posts/ archive.html sitemap.xml
+          git commit -m "Auto-update Telegram archive and sitemap" || exit 0
+          git push
