@@ -47,12 +47,10 @@ def fetch_all_telegram_posts(channel, max_posts=MAX_POSTS):
 
         # === استخراج صورة القناة الحقيقية وعنوانها ووصفها عند أول طلب ===
         if before_id is None:
-            # 1. البحث في وسوم OpenGraph و Twitter للوصول للصورة الأصلية عالية الدقة
             meta_og_img = soup.find('meta', property='og:image') or soup.find('meta', attrs={'name': 'twitter:image'})
             if meta_og_img and meta_og_img.get('content') and 't_logo' not in meta_og_img['content']:
                 CHANNEL_METADATA['avatar'] = meta_og_img['content']
             else:
-                # 2. البحث في عناصر الصورة بصفحة تلغرام
                 photo_elem = soup.find(class_=re.compile(r'tgme_page_photo_image|tgme_page_photo'))
                 if photo_elem:
                     img_tag = photo_elem.find('img')
@@ -108,37 +106,43 @@ def fetch_all_telegram_posts(channel, max_posts=MAX_POSTS):
             text_content = text_div.get_text(separator="\n").strip() if text_div else ""
             html_content = text_div.decode_contents() if text_div else ""
 
-            # 3. استخراج الصور المرفقة بدقة عالية
+            # 3. استخراج الصور المرفقة بدقة عالية (استبعاد التفاعلات والإيموجي)
             photos_html = ""
             seen_photos = set()
-            
+
+            # دالة تحقق لتصفية الروابط التي تخص الإيموجي والتفاعلات والرموز والأيقونات
+            def is_valid_photo_url(url):
+                if not url:
+                    return False
+                url_lower = url.lower()
+                invalid_keywords = ['t_logo', 'emoji', 'reaction', 'sticker', 'avatar', 'user_photo', 'icon']
+                return not any(kw in url_lower for kw in invalid_keywords)
+
+            # جلب الحاويات المخصصة للصور المرفقة بالمنشور فقط
             photo_wraps = msg.find_all(class_=re.compile(r'tgme_widget_message_photo'))
             for p in photo_wraps:
+                # استبعاد الصورة إذا كانت داخل شريط التفاعلات أو النص أو رأس/تذييل الرسالة
+                if p.find_parent(class_=re.compile(r'tgme_widget_message_reactions|tgme_widget_message_text|tgme_widget_message_user_photo|tgme_widget_message_author')):
+                    continue
+
+                # 1) فحص خلفيات الصور CSS (background-image)
                 style = p.get('style', '')
                 img_match = re.search(r'background-image:\s*url\s*\(\s*[\'"]?([^\'")]+)[\'"]?\s*\)', style, re.IGNORECASE)
                 if img_match:
                     img_url = img_match.group(1)
-                    if img_url not in seen_photos:
+                    if img_url not in seen_photos and is_valid_photo_url(img_url):
                         seen_photos.add(img_url)
                         photos_html += f'<div class="post-media"><img src="{img_url}" alt="صورة المنشور #{post_id}" loading="lazy" /></div>'
-                
+
+                # 2) فحص وسوم <img> المباشرة داخل حاوية الصورة
                 for img_tag in p.find_all('img'):
-                    src = img_tag.get('src')
-                    if src and src not in seen_photos and 't_logo' not in src:
+                    img_classes = ' '.join(img_tag.get('class', []))
+                    if 'emoji' in img_classes or 'reaction' in img_classes:
+                        continue
+                    src = img_tag.get('src') or img_tag.get('data-src')
+                    if src and src not in seen_photos and is_valid_photo_url(src):
                         seen_photos.add(src)
                         photos_html += f'<div class="post-media"><img src="{src}" alt="صورة المنشور #{post_id}" loading="lazy" /></div>'
-
-            # البحث الشامل عن خلفيات الصور إذا لم تُكتشف بعد
-            if not photos_html:
-                for elem in msg.find_all(True):
-                    style = elem.get('style', '')
-                    if 'background-image' in style and 'tgme_widget_message_user_photo' not in elem.get('class', []):
-                        img_match = re.search(r'background-image:\s*url\s*\(\s*[\'"]?([^\'")]+)[\'"]?\s*\)', style, re.IGNORECASE)
-                        if img_match:
-                            img_url = img_match.group(1)
-                            if img_url not in seen_photos and 't_logo' not in img_url:
-                                seen_photos.add(img_url)
-                                photos_html += f'<div class="post-media"><img src="{img_url}" alt="صورة المنشور #{post_id}" loading="lazy" /></div>'
 
             # 4. استخراج الفيديوهات والتسجيلات الصوتية
             media_extra_html = ""
@@ -186,7 +190,7 @@ def fetch_all_telegram_posts(channel, max_posts=MAX_POSTS):
             time_tag = msg.find('time')
             date_str = time_tag.get('datetime')[:10] if time_tag and time_tag.get('datetime') else "غير متاح"
 
-            # تركيب محتوى المنشور كاملاً مع النص والوسائط
+            # تركيب محتوى المنشور كاملاً مع النص والوسائط المرفقة فقط
             full_post_html = f'{forwarded_info}{photos_html}{media_extra_html}<div class="post-text-body">{html_content}</div>'
 
             all_posts[post_id] = {
