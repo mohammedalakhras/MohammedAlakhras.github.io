@@ -36,7 +36,7 @@ def fetch_telegram_posts(channel, limit=100):
         
         # وقت المنشور
         time_tag = msg.find('time')
-        date_str = time_tag.get('datetime') if time_tag else ""
+        date_str = time_tag.get('datetime') if time_tag else None
 
         posts.append({
             'id': post_id,
@@ -52,6 +52,9 @@ def generate_single_post_html(post):
     title = post['text'].split('\n')[0][:70] or f"منشور رقم {post['id']}"
     file_path = os.path.join(OUTPUT_DIR, f"post-{post['id']}.html")
     
+    # التعامل الآمن مع التاريخ
+    date_display = post['date'][:10] if post['date'] else 'غير متاح'
+    
     page_html = f"""
 
 
@@ -65,9 +68,9 @@ def generate_single_post_html(post):
   
     ← العودة للأرشيف
     {title}
-    تاريخ النشر: {post['date'][:10]} | منشور #{post['id']}
+    تاريخ النشر: {date_display} | منشور #{post['id']}
     {post['html']}
-    عرض المنشور في تلغرام الأصلي ↗
+    عرض المنشور في تلغرام الأصلي ���
   
 
 """
@@ -96,7 +99,6 @@ def generate_archive_html(posts):
   أرشيف منشورات القناة
   
 
-
   
     ← العودة للموقع الرئيسي
     📚 أرشيف القناة كاملًا
@@ -110,13 +112,24 @@ def generate_archive_html(posts):
 
 # === 5. توليد Sitemap.xml للجوجل ===
 def generate_sitemap(posts):
-    urls = [f"  {SITE_URL}/archive.html0.9"]
-    for p in posts:
-        urls.append(f"  {SITE_URL}/posts/post-{p['id']}.html0.7")
+    xml_content = """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>{}</loc>
+    <priority>0.9</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+""".format(f"{SITE_URL}/archive.html")
     
-    xml_content = f"""
-
-\n""".join(urls) + "\n"
+    for p in posts:
+        xml_content += f"""  <url>
+    <loc>{SITE_URL}/posts/post-{p['id']}.html</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+"""
+    
+    xml_content += "</urlset>"
 
     with open("sitemap.xml", 'w', encoding='utf-8') as f:
         f.write(xml_content)
