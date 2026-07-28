@@ -23,8 +23,8 @@ CHANNEL_METADATA = {
 }
 
 def get_page_filename(page_num):
-    """دالة لحديد اسم الملف بناءً على رقم الصفحة (الصفحة 1 تكون index.html)"""
-    return "index.html" if page_num == 1 else f"archive-page-{page_num}.html"
+    """دالة لحديد اسم الملف بناءً على رقم الصفحة (الصفحة 1 تكون archive.html)"""
+    return "archive.html" if page_num == 1 else f"archive-page-{page_num}.html"
 
 # === 2. جلب القناة واستخراج البيانات والوسائط والرسائل المحولة ===
 def fetch_all_telegram_posts(channel, max_posts=MAX_POSTS):
@@ -333,7 +333,7 @@ def generate_single_post_html(post):
     with open(file_path, 'w', encoding='utf-8') as f:
         f.write(page_html)
 
-# === 4. إنتاج صفحات الأرشيف المجزأة (index.html و archive-page-X.html) ===
+# === 4. إنتاج صفحات الأرشيف المجزأة (archive.html و archive-page-X.html) ===
 def generate_archive_pages(posts):
     total_posts = len(posts)
     total_pages = math.ceil(total_posts / POSTS_PER_PAGE) or 1
