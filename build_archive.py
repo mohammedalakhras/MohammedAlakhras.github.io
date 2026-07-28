@@ -567,84 +567,23 @@ def generate_archive_pages(posts):
 #     with open("robots.txt", 'w', encoding='utf-8') as f:
 #         f.write(robots_content)
 
-
 def generate_sitemap_and_robots(posts, total_pages):
+    import xml.etree.ElementTree as ET
     NS = "http://www.sitemaps.org/schemas/sitemap/0.9"
-    XHTML_NS = "http://www.w3.org/1999/xhtml"
+    urlset = ET.Element('urlset', xmlns=NS)
     
-    # تسجيل النطاقات
-    ET.register_namespace('', NS)
-    ET.register_namespace('xhtml', XHTML_NS)
-    
-    urlset = ET.Element('urlset')
-    
-    # الصفحة الرئيسية (الإنكليزية)
-    url_en = ET.SubElement(urlset, 'url')
-    ET.SubElement(url_en, 'loc').text = f"{SITE_URL}/"
-    ET.SubElement(url_en, 'lastmod').text = time.strftime('%Y-%m-%d')
-    ET.SubElement(url_en, 'priority').text = "1.0"
-    ET.SubElement(url_en, 'changefreq').text = "daily"
-    # إشارات hreflang
-    link_en = ET.SubElement(url_en, '{http://www.w3.org/1999/xhtml}link', {
-        'rel': 'alternate', 'hreflang': 'en', 'href': f"{SITE_URL}/"
-    })
-    link_ar = ET.SubElement(url_en, '{http://www.w3.org/1999/xhtml}link', {
-        'rel': 'alternate', 'hreflang': 'ar', 'href': f"{SITE_URL}/ar.html"
-    })
-    link_default = ET.SubElement(url_en, '{http://www.w3.org/1999/xhtml}link', {
-        'rel': 'alternate', 'hreflang': 'x-default', 'href': f"{SITE_URL}/"
-    })
+    url = ET.SubElement(urlset, 'url')
+    ET.SubElement(url, 'loc').text = f"{SITE_URL}/"
+    ET.SubElement(url, 'priority').text = "1.0"
 
-    # الصفحة العربية
-    url_ar = ET.SubElement(urlset, 'url')
-    ET.SubElement(url_ar, 'loc').text = f"{SITE_URL}/ar.html"
-    ET.SubElement(url_ar, 'lastmod').text = time.strftime('%Y-%m-%d')
-    ET.SubElement(url_ar, 'priority').text = "1.0"
-    ET.SubElement(url_ar, 'changefreq').text = "daily"
-    ET.SubElement(url_ar, '{http://www.w3.org/1999/xhtml}link', {
-        'rel': 'alternate', 'hreflang': 'en', 'href': f"{SITE_URL}/"
-    })
-    ET.SubElement(url_ar, '{http://www.w3.org/1999/xhtml}link', {
-        'rel': 'alternate', 'hreflang': 'ar', 'href': f"{SITE_URL}/ar.html"
-    })
-    ET.SubElement(url_ar, '{http://www.w3.org/1999/xhtml}link', {
-        'rel': 'alternate', 'hreflang': 'x-default', 'href': f"{SITE_URL}/"
-    })
-
-    # صفحة الأرشيف الرئيسية
-    url_archive = ET.SubElement(urlset, 'url')
-    ET.SubElement(url_archive, 'loc').text = f"{SITE_URL}/archive.html"
-    ET.SubElement(url_archive, 'lastmod').text = posts[0]['date'] if posts else time.strftime('%Y-%m-%d')
-    ET.SubElement(url_archive, 'priority').text = "0.9"
-    ET.SubElement(url_archive, 'changefreq').text = "daily"
-
-    # بقية صفحات الأرشيف
-    for p in range(2, total_pages + 1):
-        url_page = ET.SubElement(urlset, 'url')
-        ET.SubElement(url_page, 'loc').text = f"{SITE_URL}/archive-page-{p}.html"
-        ET.SubElement(url_page, 'lastmod').text = posts[0]['date'] if posts else time.strftime('%Y-%m-%d')
-        ET.SubElement(url_page, 'priority').text = "0.8"
-        ET.SubElement(url_page, 'changefreq').text = "weekly"
-
-    # صفحات المنشورات
-    for post in posts:
-        url_post = ET.SubElement(urlset, 'url')
-        ET.SubElement(url_post, 'loc').text = f"{SITE_URL}/posts/post-{post['id']}.html"
-        ET.SubElement(url_post, 'lastmod').text = post['date']
-        ET.SubElement(url_post, 'priority').text = "0.7"
-
-    # توليد XML بشكل سليم مع إعلان XML
     tree = ET.ElementTree(urlset)
-    with open("sitemap.xml", 'wb') as f:
-        f.write(b'<?xml version="1.0" encoding="UTF-8"?>\n')
-        tree.write(f, encoding='utf-8', xml_declaration=False)
+    # لا نضيف سطر <?xml?> يدوياً؛ ElementTree سيضيفه تلقائياً عند كتابة الملف
+    with open("sitemap.xml", 'w', encoding='utf-8') as f:
+        tree.write(f, encoding='unicode', xml_declaration=True)
 
-    # ملف robots.txt
-    robots_content = f"User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n"
     with open("robots.txt", 'w', encoding='utf-8') as f:
-        f.write(robots_content)
+        f.write(f"User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n")
 
-        
 # === 6. التشغيل التنفيذي ===
 if __name__ == "__main__":
     posts = fetch_all_telegram_posts(CHANNEL_USERNAME)
