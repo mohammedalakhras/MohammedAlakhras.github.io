@@ -4,6 +4,7 @@ import time
 import urllib.request
 import math
 from bs4 import BeautifulSoup
+import xml.etree.ElementTree as ET
 
 # === 1. الإعدادات العامة ===
 CHANNEL_USERNAME = "MohammedAlakhras"
@@ -519,53 +520,131 @@ def generate_archive_pages(posts):
     return total_pages
 
 # === 5. إنشاء خريطة الموقع Sitemap وملف Robots.txt ===
+# def generate_sitemap_and_robots(posts, total_pages):
+#     # آخر تاريخ نشر فعلي (يُستخدم كـ lastmod لصفحات القوائم/الأرشيف بدل تركها بدون تاريخ)
+#     latest_post_date = posts[0]['date'] if posts else time.strftime('%Y-%m-%d')
+#     today = time.strftime('%Y-%m-%d')
+
+#     xml_entries = [
+#         # الصفحة الرئيسية (الإنكليزية) + إشارات hreflang للنسخة العربية المقابلة
+#         (f"  <url>\n    <loc>{SITE_URL}/</loc>\n    <lastmod>{today}</lastmod>\n"
+#          f"    <xhtml:link rel=\"alternate\" hreflang=\"en\" href=\"{SITE_URL}/\" />\n"
+#          f"    <xhtml:link rel=\"alternate\" hreflang=\"ar\" href=\"{SITE_URL}/ar.html\" />\n"
+#          f"    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"{SITE_URL}/\" />\n"
+#          f"    <priority>1.0</priority>\n    <changefreq>daily</changefreq>\n  </url>"),
+#         # النسخة العربية من الصفحة الرئيسية
+#         (f"  <url>\n    <loc>{SITE_URL}/ar.html</loc>\n    <lastmod>{today}</lastmod>\n"
+#          f"    <xhtml:link rel=\"alternate\" hreflang=\"en\" href=\"{SITE_URL}/\" />\n"
+#          f"    <xhtml:link rel=\"alternate\" hreflang=\"ar\" href=\"{SITE_URL}/ar.html\" />\n"
+#          f"    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"{SITE_URL}/\" />\n"
+#          f"    <priority>1.0</priority>\n    <changefreq>daily</changefreq>\n  </url>"),
+#         # صفحة الأرشيف الأولى (archive.html) - كانت مفقودة سابقاً من الـ sitemap
+#         (f"  <url>\n    <loc>{SITE_URL}/archive.html</loc>\n    <lastmod>{latest_post_date}</lastmod>\n"
+#          f"    <priority>0.9</priority>\n    <changefreq>daily</changefreq>\n  </url>"),
+#     ]
+
+#     # إضافة صفحات الأرشيف المجزأة في Sitemap
+#     for p in range(2, total_pages + 1):
+#         xml_entries.append(
+#             f"  <url>\n    <loc>{SITE_URL}/archive-page-{p}.html</loc>\n    <lastmod>{latest_post_date}</lastmod>\n"
+#             f"    <priority>0.8</priority>\n    <changefreq>weekly</changefreq>\n  </url>"
+#         )
+
+#     # إضافة صفحات المنشورات
+#     for p in posts:
+#         xml_entries.append(f"  <url>\n    <loc>{SITE_URL}/posts/post-{p['id']}.html</loc>\n    <lastmod>{p['date']}</lastmod>\n    <priority>0.7</priority>\n  </url>")
+
+#     xml_content = (
+#         '<?xml version="1.0" encoding="UTF-8"?>\n'
+#         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
+#         'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
+#         + "\n".join(xml_entries) + '\n</urlset>'
+#     )
+#     with open("sitemap.xml", 'w', encoding='utf-8') as f:
+#         f.write(xml_content)
+
+#     robots_content = f"User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n"
+#     with open("robots.txt", 'w', encoding='utf-8') as f:
+#         f.write(robots_content)
+
+
 def generate_sitemap_and_robots(posts, total_pages):
-    # آخر تاريخ نشر فعلي (يُستخدم كـ lastmod لصفحات القوائم/الأرشيف بدل تركها بدون تاريخ)
-    latest_post_date = posts[0]['date'] if posts else time.strftime('%Y-%m-%d')
-    today = time.strftime('%Y-%m-%d')
+    NS = "http://www.sitemaps.org/schemas/sitemap/0.9"
+    XHTML_NS = "http://www.w3.org/1999/xhtml"
+    
+    # تسجيل النطاقات
+    ET.register_namespace('', NS)
+    ET.register_namespace('xhtml', XHTML_NS)
+    
+    urlset = ET.Element('urlset')
+    
+    # الصفحة الرئيسية (الإنكليزية)
+    url_en = ET.SubElement(urlset, 'url')
+    ET.SubElement(url_en, 'loc').text = f"{SITE_URL}/"
+    ET.SubElement(url_en, 'lastmod').text = time.strftime('%Y-%m-%d')
+    ET.SubElement(url_en, 'priority').text = "1.0"
+    ET.SubElement(url_en, 'changefreq').text = "daily"
+    # إشارات hreflang
+    link_en = ET.SubElement(url_en, '{http://www.w3.org/1999/xhtml}link', {
+        'rel': 'alternate', 'hreflang': 'en', 'href': f"{SITE_URL}/"
+    })
+    link_ar = ET.SubElement(url_en, '{http://www.w3.org/1999/xhtml}link', {
+        'rel': 'alternate', 'hreflang': 'ar', 'href': f"{SITE_URL}/ar.html"
+    })
+    link_default = ET.SubElement(url_en, '{http://www.w3.org/1999/xhtml}link', {
+        'rel': 'alternate', 'hreflang': 'x-default', 'href': f"{SITE_URL}/"
+    })
 
-    xml_entries = [
-        # الصفحة الرئيسية (الإنكليزية) + إشارات hreflang للنسخة العربية المقابلة
-        (f"  <url>\n    <loc>{SITE_URL}/</loc>\n    <lastmod>{today}</lastmod>\n"
-         f"    <xhtml:link rel=\"alternate\" hreflang=\"en\" href=\"{SITE_URL}/\" />\n"
-         f"    <xhtml:link rel=\"alternate\" hreflang=\"ar\" href=\"{SITE_URL}/ar.html\" />\n"
-         f"    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"{SITE_URL}/\" />\n"
-         f"    <priority>1.0</priority>\n    <changefreq>daily</changefreq>\n  </url>"),
-        # النسخة العربية من الصفحة الرئيسية
-        (f"  <url>\n    <loc>{SITE_URL}/ar.html</loc>\n    <lastmod>{today}</lastmod>\n"
-         f"    <xhtml:link rel=\"alternate\" hreflang=\"en\" href=\"{SITE_URL}/\" />\n"
-         f"    <xhtml:link rel=\"alternate\" hreflang=\"ar\" href=\"{SITE_URL}/ar.html\" />\n"
-         f"    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"{SITE_URL}/\" />\n"
-         f"    <priority>1.0</priority>\n    <changefreq>daily</changefreq>\n  </url>"),
-        # صفحة الأرشيف الأولى (archive.html) - كانت مفقودة سابقاً من الـ sitemap
-        (f"  <url>\n    <loc>{SITE_URL}/archive.html</loc>\n    <lastmod>{latest_post_date}</lastmod>\n"
-         f"    <priority>0.9</priority>\n    <changefreq>daily</changefreq>\n  </url>"),
-    ]
+    # الصفحة العربية
+    url_ar = ET.SubElement(urlset, 'url')
+    ET.SubElement(url_ar, 'loc').text = f"{SITE_URL}/ar.html"
+    ET.SubElement(url_ar, 'lastmod').text = time.strftime('%Y-%m-%d')
+    ET.SubElement(url_ar, 'priority').text = "1.0"
+    ET.SubElement(url_ar, 'changefreq').text = "daily"
+    ET.SubElement(url_ar, '{http://www.w3.org/1999/xhtml}link', {
+        'rel': 'alternate', 'hreflang': 'en', 'href': f"{SITE_URL}/"
+    })
+    ET.SubElement(url_ar, '{http://www.w3.org/1999/xhtml}link', {
+        'rel': 'alternate', 'hreflang': 'ar', 'href': f"{SITE_URL}/ar.html"
+    })
+    ET.SubElement(url_ar, '{http://www.w3.org/1999/xhtml}link', {
+        'rel': 'alternate', 'hreflang': 'x-default', 'href': f"{SITE_URL}/"
+    })
 
-    # إضافة صفحات الأرشيف المجزأة في Sitemap
+    # صفحة الأرشيف الرئيسية
+    url_archive = ET.SubElement(urlset, 'url')
+    ET.SubElement(url_archive, 'loc').text = f"{SITE_URL}/archive.html"
+    ET.SubElement(url_archive, 'lastmod').text = posts[0]['date'] if posts else time.strftime('%Y-%m-%d')
+    ET.SubElement(url_archive, 'priority').text = "0.9"
+    ET.SubElement(url_archive, 'changefreq').text = "daily"
+
+    # بقية صفحات الأرشيف
     for p in range(2, total_pages + 1):
-        xml_entries.append(
-            f"  <url>\n    <loc>{SITE_URL}/archive-page-{p}.html</loc>\n    <lastmod>{latest_post_date}</lastmod>\n"
-            f"    <priority>0.8</priority>\n    <changefreq>weekly</changefreq>\n  </url>"
-        )
+        url_page = ET.SubElement(urlset, 'url')
+        ET.SubElement(url_page, 'loc').text = f"{SITE_URL}/archive-page-{p}.html"
+        ET.SubElement(url_page, 'lastmod').text = posts[0]['date'] if posts else time.strftime('%Y-%m-%d')
+        ET.SubElement(url_page, 'priority').text = "0.8"
+        ET.SubElement(url_page, 'changefreq').text = "weekly"
 
-    # إضافة صفحات المنشورات
-    for p in posts:
-        xml_entries.append(f"  <url>\n    <loc>{SITE_URL}/posts/post-{p['id']}.html</loc>\n    <lastmod>{p['date']}</lastmod>\n    <priority>0.7</priority>\n  </url>")
+    # صفحات المنشورات
+    for post in posts:
+        url_post = ET.SubElement(urlset, 'url')
+        ET.SubElement(url_post, 'loc').text = f"{SITE_URL}/posts/post-{post['id']}.html"
+        ET.SubElement(url_post, 'lastmod').text = post['date']
+        ET.SubElement(url_post, 'priority').text = "0.7"
 
-    xml_content = (
-        '<?xml version="1.0" encoding="UTF-8"?>\n'
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
-        'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
-        + "\n".join(xml_entries) + '\n</urlset>'
-    )
-    with open("sitemap.xml", 'w', encoding='utf-8') as f:
-        f.write(xml_content)
+    # توليد XML بشكل سليم مع إعلان XML
+    tree = ET.ElementTree(urlset)
+    with open("sitemap.xml", 'wb') as f:
+        f.write(b'<?xml version="1.0" encoding="UTF-8"?>\n')
+        tree.write(f, encoding='utf-8', xml_declaration=False)
 
+    # ملف robots.txt
     robots_content = f"User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n"
     with open("robots.txt", 'w', encoding='utf-8') as f:
         f.write(robots_content)
 
+        
 # === 6. التشغيل التنفيذي ===
 if __name__ == "__main__":
     posts = fetch_all_telegram_posts(CHANNEL_USERNAME)
