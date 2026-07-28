@@ -4,20 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <!-- SEO Meta Tags - Optimization for all name variations -->
-  <title>Mohammed Alakhras | Software Engineer & Deep Learning Researcher</title>
-  <meta name="description" content="Official Portfolio of Mohammed Alakhras (محمد عبد المنعم الأخرس). Software Engineer, MSc Deep Learning Researcher at Homs University, originating from Hama, Syria. Expertise in Node.js, PyTorch, and Web Engineering.">
-  <meta name="keywords" content="Mohammed Alakhras, Mohammad Alakhras, Mohammed Al-Akhras, Mohammad Al-Akhras, Alakhras, Al-Akhras, محمد الأخرس, محمد عبد المنعم الأخرس, الأخرس, Software Engineer Syria, Deep Learning Researcher, Homs University, Hama">
+  <!-- SEO Meta Tags - Dual Language for better Indexing -->
+  <title>Mohammed Alakhras | محمد الأخرس - Software Engineer</title>
+  <meta name="description" content="Official Portfolio of Mohammed Alakhras (محمد عبد المنعم الأخرس). Software Engineer and Deep Learning Researcher from Syria. مهندس برمجيات وباحث في الذكاء الاصطناعي والتعلم العميق من سوريا.">
+  <meta name="keywords" content="Mohammed Alakhras, Mohammad Alakhras, Mohammed Al-Akhras, محمد الأخرس, محمد عبد المنعم الأخرس, Software Engineer Syria, Deep Learning Researcher, مهندس برمجيات سوري, مطور ويب">
   <meta name="author" content="Mohammed Alakhras">
   <meta name="robots" content="index, follow">
 
   <!-- Open Graph / Social Media -->
-  <meta property="og:title" content="Mohammed Alakhras | Software Engineer Portfolio">
-  <meta property="og:description" content="MSc Student & Top Graduate in Software Engineering & Deep Learning Research.">
+  <meta property="og:title" content="Mohammed Alakhras | Software Engineer & Researcher">
+  <meta property="og:description" content="Top Graduate in Software Engineering & Deep Learning Research - مهندس برمجيات وباحث في التعلم العميق.">
   <meta property="og:image" content="https://avatars.githubusercontent.com/u/31374510">
   <meta property="og:type" content="website">
 
-  <!-- Schema.org Structured Data for Google Knowledge Graph -->
+  <!-- Schema.org Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -26,10 +26,8 @@
     "alternateName": [
       "Mohammed Al-Akhras",
       "Mohammad Alakhras",
-      "Mohammad Al-Akhras",
       "محمد الأخرس",
-      "محمد عبد المنعم الأخرس",
-      "الأخرس"
+      "محمد عبد المنعم الأخرس"
     ],
     "jobTitle": "Software Engineer & Deep Learning Researcher",
     "worksFor": {
@@ -59,9 +57,11 @@
       --card-bg: #1e293b;
       --card-border: #334155;
       --primary: #38bdf8;
+      --primary-hover: #0284c7;
       --accent: #818cf8;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
+      --transition: all 0.3s ease;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -75,7 +75,7 @@
     }
 
     .container {
-      max-width: 850px;
+      max-width: 900px;
       margin: 0 auto;
       padding: 0 20px;
     }
@@ -102,6 +102,12 @@
       border-radius: 20px;
       font-weight: 600;
       cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .lang-btn:hover {
+      background: var(--primary);
+      color: #000;
     }
 
     .hero {
@@ -110,22 +116,23 @@
     }
 
     .profile-img {
-      width: 120px;
-      height: 120px;
+      width: 130px;
+      height: 130px;
       border-radius: 50%;
       object-fit: cover;
       border: 3px solid var(--primary);
       margin-bottom: 15px;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2);
     }
 
     .hero h1 {
-      font-size: 2rem;
+      font-size: 2.2rem;
       font-weight: 800;
       margin-bottom: 6px;
     }
 
     .hero p.subtitle {
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       color: var(--primary);
       font-weight: 600;
       margin-bottom: 8px;
@@ -133,8 +140,8 @@
 
     .hero p.location {
       color: var(--text-muted);
-      font-size: 0.9rem;
-      margin-bottom: 20px;
+      font-size: 0.95rem;
+      margin-bottom: 25px;
     }
 
     .social-links {
@@ -142,89 +149,223 @@
       gap: 12px;
       justify-content: center;
       flex-wrap: wrap;
+      margin-bottom: 25px;
     }
 
     .social-icon {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 50%;
       color: var(--text-main);
       text-decoration: none;
-      transition: background 0.2s;
+      transition: var(--transition);
     }
 
     .social-icon:hover {
       background: var(--primary);
       color: #000;
+      transform: translateY(-3px);
     }
 
-    .social-icon svg {
-      width: 20px;
-      height: 20px;
-      fill: currentColor;
+    .social-icon svg { width: 20px; height: 20px; fill: currentColor; }
+
+    /* Main CTA Button */
+    .btn-main {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff;
+      padding: 10px 24px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: var(--transition);
+      border: none;
+      box-shadow: 0 4px 15px rgba(129, 140, 248, 0.3);
+    }
+
+    .btn-main:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(129, 140, 248, 0.5);
+      color: #fff;
     }
 
     .section-title {
-      font-size: 1.3rem;
+      font-size: 1.4rem;
       font-weight: 700;
-      margin: 30px 0 15px;
+      margin: 40px 0 20px;
       border-bottom: 2px solid var(--card-border);
-      padding-bottom: 8px;
+      padding-bottom: 10px;
       color: var(--primary);
     }
 
     .card {
       background-color: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 15px;
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 20px;
+      transition: var(--transition);
     }
 
+    .card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+
+    /* Skills Grid */
     .skills-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 12px;
+      gap: 15px;
     }
 
     .skill-item {
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(255, 255, 255, 0.02);
       border: 1px solid var(--card-border);
-      padding: 12px;
-      border-radius: 6px;
+      padding: 15px;
+      border-radius: 8px;
     }
 
     .skill-item h4 {
       color: var(--primary);
-      margin-bottom: 5px;
-      font-size: 0.95rem;
+      margin-bottom: 8px;
+      font-size: 1rem;
     }
 
-    .timeline-item {
-      padding-left: 15px;
-      border-left: 2px solid var(--primary);
+    /* Projects Grid */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .project-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 20px;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .project-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--primary);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .project-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .project-header h3 {
+      font-size: 1.2rem;
+      color: #fff;
+    }
+
+    .project-links a {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 10px;
+      transition: color 0.2s;
+    }
+    
+    .rtl .project-links a {
+      margin-left: 0;
+      margin-right: 10px;
+    }
+
+    .project-links a:hover { color: var(--accent); }
+
+    .project-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
       margin-bottom: 15px;
+      flex-grow: 1;
+    }
+
+    .project-features {
+      margin: 10px 0 15px 20px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .rtl .project-features {
+      margin: 10px 20px 15px 0;
+    }
+
+    .tech-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .tag {
+      background: rgba(56, 189, 248, 0.1);
+      color: var(--primary);
+      padding: 4px 10px;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    /* Timeline */
+    .timeline-item {
+      padding-left: 20px;
+      border-left: 2px solid var(--primary);
+      margin-bottom: 20px;
+      position: relative;
+    }
+    
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -6px;
+      top: 5px;
+      width: 10px;
+      height: 10px;
+      background: var(--bg-color);
+      border: 2px solid var(--primary);
+      border-radius: 50%;
     }
 
     .timeline-item:last-child { margin-bottom: 0; }
+    .timeline-item h4 { font-size: 1.05rem; color: #fff; }
+    .timeline-item span { font-size: 0.85rem; color: var(--accent); font-weight: 600;}
+    .timeline-item p { margin-top: 6px; color: var(--text-muted); font-size: 0.95rem; }
 
-    .timeline-item h4 { font-size: 1rem; color: #fff; }
-    .timeline-item span { font-size: 0.85rem; color: var(--text-muted); }
-    .timeline-item p { margin-top: 4px; color: var(--text-muted); font-size: 0.9rem; }
-
+    /* RTL Support */
     .rtl { direction: rtl; text-align: right; }
-    .rtl .timeline-item { padding-left: 0; padding-right: 15px; border-left: none; border-right: 2px solid var(--primary); }
+    .rtl .timeline-item { 
+      padding-left: 0; 
+      padding-right: 20px; 
+      border-left: none; 
+      border-right: 2px solid var(--primary); 
+    }
+    .rtl .timeline-item::before {
+      left: auto;
+      right: -6px;
+    }
 
     footer {
       text-align: center;
-      margin-top: 40px;
+      margin-top: 50px;
       color: var(--text-muted);
-      font-size: 0.85rem;
+      font-size: 0.9rem;
+      border-top: 1px solid var(--card-border);
+      padding-top: 20px;
     }
   </style>
 </head>
@@ -245,7 +386,7 @@
       <p class="subtitle" id="hero-title">Software Engineer & Deep Learning Researcher</p>
       <p class="location" id="hero-location">Based in Hama | Studying at Homs University, Syria</p>
       
-      <!-- SVG SOCIAL ICONS (NO EXTERNAL CSS DOWNLOAD) -->
+      <!-- Social Links -->
       <div class="social-links">
         <a href="https://github.com/MohammedAlakhras" target="_blank" class="social-icon" title="GitHub">
           <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
@@ -253,19 +394,8 @@
         <a href="https://www.linkedin.com/in/mohammedalakhras/" target="_blank" class="social-icon" title="LinkedIn">
           <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
         </a>
-  <a href="https://t.me/s/mohammedalakhras/" target="_blank" class="social-icon" title="Telegram Channel">
-  <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-1-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.35-.49.97-.74 3.79-1.65 6.32-2.73 7.57-3.26 3.61-1.52 4.36-1.79 4.85-1.8.11 0 .35.03.51.16.13.11.17.26.19.37.02.1.04.3.02.46z"/>
-  </svg>
-</a>
-
-      <a href="https://t.me/mohammedalakhras/" target="_blank" class="social-icon" title="Telegram Profile">
-  <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-    <path d="M21.73 2.3a1 1 0 0 0-1-.1l-18 7a1 1 0 0 0-.15 1.8l4.45 2 2 6.13a1 1 0 0 0 1.5.57l3-2.31 4.54 3.3a1 1 0 0 0 1.56-.63l3.5-17a1 1 0 0 0-.4-1.06zm-4.7 6.46l-7.38 6.64-.32 3.12-.92-2.82z"/>
-  </svg>
-</a>
-        <a href="https://www.facebook.com/MohammedAlakras/" target="_blank" class="social-icon" title="Facebook">
-          <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        <a href="https://t.me/s/mohammedalakhras/" target="_blank" class="social-icon" title="Telegram Channel">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-1-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.35-.49.97-.74 3.79-1.65 6.32-2.73 7.57-3.26 3.61-1.52 4.36-1.79 4.85-1.8.11 0 .35.03.51.16.13.11.17.26.19.37.02.1.04.3.02.46z"/></svg>
         </a>
         <a href="https://x.com/M_Alakhras" target="_blank" class="social-icon" title="X">
           <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
@@ -274,6 +404,9 @@
           <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
         </a>
       </div>
+
+      <!-- Main CTA Button -->
+      <a href="https://mohammedalakhras.github.io/archive.html" class="btn-main" id="btn-archive">Thoughts & Posts</a>
     </header>
 
     <!-- ENGLISH CONTENT -->
@@ -313,6 +446,73 @@
         </div>
       </section>
 
+      <!-- NEW PROJECTS SECTION -->
+      <section>
+        <h2 class="section-title">Selected Projects</h2>
+        <div class="projects-grid">
+          <!-- BuyTx -->
+          <div class="project-card">
+            <div class="project-header">
+              <h3>BuyTx Marketplace (Backend)</h3>
+            </div>
+            <p class="project-desc">Digital marketplace solution enabling localized goods trading with real-time buyer-seller engagement. Implements enterprise-grade architecture supporting secure media workflows and instant notifications.</p>
+            <ul class="project-features">
+              <li>Real-time chat & notifications (Socket.io/Firebase)</li>
+              <li>Secure image uploads via AWS S3 with presigned URLs</li>
+              <li>JWT authentication, role-based access control & robust validation</li>
+            </ul>
+            <div class="tech-tags">
+              <span class="tag">Node.js</span><span class="tag">Express</span><span class="tag">MongoDB</span><span class="tag">Socket.io</span><span class="tag">AWS S3</span>
+            </div>
+          </div>
+
+          <!-- Book Store API -->
+          <div class="project-card">
+            <div class="project-header">
+              <h3>Book Store API</h3>
+              <div class="project-links">
+                <a href="https://github.com/mohammedalakhras" target="_blank">GitHub</a>
+              </div>
+            </div>
+            <p class="project-desc">A RESTful API for a book store, enabling comprehensive book and author management with secure user authentication and structured error handling.</p>
+            <ul class="project-features">
+              <li>Role-based access control (admin vs. regular users)</li>
+              <li>CRUD operations, Secure password hashing</li>
+              <li>Full API documentation using Postman</li>
+            </ul>
+            <div class="tech-tags">
+              <span class="tag">Node.js</span><span class="tag">Express.js</span><span class="tag">Mongoose</span><span class="tag">JWT</span>
+            </div>
+          </div>
+
+          <!-- Health Forum -->
+          <div class="project-card">
+            <div class="project-header">
+              <h3>Health Forum with Deep Learning</h3>
+            </div>
+            <p class="project-desc">A health forum platform combining expert physicians with deep learning algorithms to facilitate seamless collaboration between specialists.</p>
+            <ul class="project-features">
+              <li>Deep learning models for disease classification using radiological images</li>
+              <li>Integrated ChatDoctor, an AI-based tool for health inquiries</li>
+            </ul>
+            <div class="tech-tags">
+              <span class="tag">React.js</span><span class="tag">Laravel</span><span class="tag">PyTorch</span><span class="tag">MySQL</span>
+            </div>
+          </div>
+
+          <!-- Reproductive Health -->
+          <div class="project-card">
+            <div class="project-header">
+              <h3>Reproductive Health Management App</h3>
+            </div>
+            <p class="project-desc">A comprehensive desktop application designed for efficient reproductive health data management, patient tracking, and reporting.</p>
+            <div class="tech-tags">
+              <span class="tag">C#</span><span class="tag">SQL Server</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section>
         <h2 class="section-title">Education</h2>
         <div class="card">
@@ -325,29 +525,6 @@
             <h4>B.Sc. in Software Engineering</h4>
             <span>2019 – 2024 | Homs University, Syria</span>
             <p>GPA: 92% | Ranked 1st in class across all academic years (Top Graduate).</p>
-          </div>
-          <div class="timeline-item">
-            <h4>Vocational High School (Computer Techniques)</h4>
-            <span>2016 – 2019 | Secondary School, Syria</span>
-            <p>GPA: 99.09% | Ranked 1st in Hama Governorate & 2nd Nationally.</p>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2 class="section-title">Honors & Awards</h2>
-        <div class="card">
-          <div class="timeline-item">
-            <h4>Top Graduate Award (2024)</h4>
-            <p>Faculty of Informatics Engineering, Homs University.</p>
-          </div>
-          <div class="timeline-item">
-            <h4>Academic Excellence Award (5 Consecutive Years)</h4>
-            <p>Ranked 1st in the department for each academic year (2020 – 2024).</p>
-          </div>
-          <div class="timeline-item">
-            <h4>Excellence & Recognition Awards (2019)</h4>
-            <p>Recognized by the Governor of Hama & Engineers Syndicate for achieving 1st Rank in Hama Governorate.</p>
           </div>
         </div>
       </section>
@@ -390,6 +567,73 @@
         </div>
       </section>
 
+      <!-- ARABIC PROJECTS SECTION -->
+      <section>
+        <h2 class="section-title">أبرز المشاريع</h2>
+        <div class="projects-grid">
+          <!-- BuyTx -->
+          <div class="project-card">
+            <div class="project-header">
+              <h3>منصة BuyTx للتجارة الإلكترونية (Backend)</h3>
+            </div>
+            <p class="project-desc">منصة سوق رقمية تتيح تداول البضائع محلياً مع تفاعل فوري بين البائع والمشتري. مبنية بمعمارية برمجية تدعم رفع الملفات الآمن والإشعارات الفورية.</p>
+            <ul class="project-features">
+              <li>محادثات وإشعارات لحظية (Socket.io/Firebase)</li>
+              <li>رفع الصور بشكل آمن عبر AWS S3</li>
+              <li>نظام مصادقة (JWT) وصلاحيات وصول متقدمة للمستخدمين</li>
+            </ul>
+            <div class="tech-tags">
+              <span class="tag">Node.js</span><span class="tag">Express</span><span class="tag">MongoDB</span><span class="tag">Socket.io</span><span class="tag">AWS S3</span>
+            </div>
+          </div>
+
+          <!-- Book Store API -->
+          <div class="project-card">
+            <div class="project-header">
+              <h3>واجهة برمجية لمتجر كتب (Book Store API)</h3>
+              <div class="project-links">
+                <a href="https://github.com/mohammedalakhras" target="_blank">رابط GitHub</a>
+              </div>
+            </div>
+            <p class="project-desc">تطوير واجهة برمجة تطبيقات (API) متوافقة مع بنية RESTful لإدارة الكتب والمؤلفين، مع نظام مصادقة آمن ومعالجة مهيكلة للأخطاء.</p>
+            <ul class="project-features">
+              <li>نظام صلاحيات للتحكم (مدير مقابل مستخدم عادي)</li>
+              <li>عمليات (CRUD) متكاملة وتشفير آمن لكلمات المرور</li>
+              <li>توثيق شامل للواجهة البرمجية باستخدام Postman</li>
+            </ul>
+            <div class="tech-tags">
+              <span class="tag">Node.js</span><span class="tag">Express.js</span><span class="tag">Mongoose</span><span class="tag">JWT</span>
+            </div>
+          </div>
+
+          <!-- Health Forum -->
+          <div class="project-card">
+            <div class="project-header">
+              <h3>منتدى صحي مدعوم بالتعلم العميق</h3>
+            </div>
+            <p class="project-desc">تصميم وتطوير منصة منتدى صحي تجمع بين الأطباء المتخصصين وخوارزميات التعلم العميق لتسهيل التعاون ومشاركة الحالات.</p>
+            <ul class="project-features">
+              <li>تطبيق نماذج تعلم عميق لتصنيف الأمراض من الصور الإشعاعية</li>
+              <li>دمج أداة ChatDoctor المدعومة بالذكاء الاصطناعي للاستفسارات الصحية</li>
+            </ul>
+            <div class="tech-tags">
+              <span class="tag">React.js</span><span class="tag">Laravel</span><span class="tag">PyTorch</span><span class="tag">MySQL</span>
+            </div>
+          </div>
+
+          <!-- Reproductive Health -->
+          <div class="project-card">
+            <div class="project-header">
+              <h3>تطبيق إدارة بيانات الصحة الإنجابية</h3>
+            </div>
+            <p class="project-desc">تطوير تطبيق مكتبي متكامل لتخزين وتتبع بيانات المرضى، إدارة المواعيد، إجراء العمليات الإحصائية، وتوليد تقارير تلقائية.</p>
+            <div class="tech-tags">
+              <span class="tag">C#</span><span class="tag">SQL Server</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section>
         <h2 class="section-title">المؤهلات العلمية</h2>
         <div class="card">
@@ -402,29 +646,6 @@
             <h4>بكالوريوس في هندسة البرمجيات</h4>
             <span>2019 – 2024 | جامعة حمص، سوريا</span>
             <p>المعدل العام: 92% | الخريج الأول والمرتبة الأولى طيلة سنوات الدراسة.</p>
-          </div>
-          <div class="timeline-item">
-            <h4>الثانوية المهنية (تقنيات الحاسوب)</h4>
-            <span>2016 – 2019 | سوريا</span>
-            <p>المعدل: 99.09% | المرتبة الأولى على مستوى محافظة حماة والثانية على مستوى سوريا.</p>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2 class="section-title">الجوائز والتكريمات</h2>
-        <div class="card">
-          <div class="timeline-item">
-            <h4>جائزة الخريج الأول (2024)</h4>
-            <p>كلية الهندسة المعلوماتية - جامعة حمص.</p>
-          </div>
-          <div class="timeline-item">
-            <h4>جائزة التفوق الدراسي (5 سنوات متتالية)</h4>
-            <p>الحصول على المرتبة الأولى في الكلية لكل عام دراسي من 2020 حتى 2024.</p>
-          </div>
-          <div class="timeline-item">
-            <h4>تكريم محافظ حماة ونقابة المهندسين (2019)</h4>
-            <p>للحصول على المرتبة الأولى في الشهادة الثانوية المهنية على مستوى محافظة حماة.</p>
           </div>
         </div>
       </section>
@@ -445,23 +666,36 @@
       const heroName = document.getElementById('hero-name');
       const heroTitle = document.getElementById('hero-title');
       const heroLocation = document.getElementById('hero-location');
+      const btnArchive = document.getElementById('btn-archive');
 
       if (en.style.display === 'none') {
+        // Switch to English
         en.style.display = 'block';
         ar.style.display = 'none';
         btnText.innerText = 'العربية';
         heroName.innerText = 'Mohammed Alakhras';
         heroTitle.innerText = 'Software Engineer & Deep Learning Researcher';
         heroLocation.innerText = 'Based in Hama | Studying at Homs University, Syria';
+        btnArchive.innerText = 'Thoughts & Posts';
+        
+        // SEO & Accessibility Updates
         document.documentElement.dir = 'ltr';
+        document.documentElement.lang = 'en';
+        document.title = 'Mohammed Alakhras | Software Engineer';
       } else {
+        // Switch to Arabic
         en.style.display = 'none';
         ar.style.display = 'block';
         btnText.innerText = 'English';
         heroName.innerText = 'محمد عبد المنعم الأخرس';
         heroTitle.innerText = 'مهندس برمجيات وباحث في الذكاء الاصطناعي والتعلم العميق';
         heroLocation.innerText = 'من حماة | أدرس في جامعة حمص، سوريا';
+        btnArchive.innerText = 'الخواطر والمنشورات';
+        
+        // SEO & Accessibility Updates
         document.documentElement.dir = 'rtl';
+        document.documentElement.lang = 'ar';
+        document.title = 'محمد الأخرس | مهندس برمجيات';
       }
     }
   </script>

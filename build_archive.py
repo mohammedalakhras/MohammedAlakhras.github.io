@@ -22,6 +22,18 @@ CHANNEL_METADATA = {
     "username": CHANNEL_USERNAME
 }
 
+def clean_text_for_meta(text):
+    """تنظيف النصوص لاستخدامها في وسوم Meta الوصف والعناوين بدون أخطاء XML/HTML"""
+    if not text:
+        return ""
+    # إزالة وسوم HTML
+    clean = re.sub(r'<[^>]+>', ' ', text)
+    # إزالة الأسطر الجديدة والمسافات الزائدة
+    clean = re.sub(r'\s+', ' ', clean).strip()
+    # هروب الرموز الخاصة
+    clean = clean.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;')
+    return clean
+
 # === 2. جلب القناة واستخراج البيانات والوسائط والرسائل المحولة ===
 def fetch_all_telegram_posts(channel, max_posts=MAX_POSTS):
     all_posts = {}
@@ -106,11 +118,10 @@ def fetch_all_telegram_posts(channel, max_posts=MAX_POSTS):
             text_content = text_div.get_text(separator="\n").strip() if text_div else ""
             html_content = text_div.decode_contents() if text_div else ""
 
-            # 3. استخراج الصور المرفقة بدقة عالية (استبعاد التفاعلات والإيموجي)
+            # 3. استخراج الصور
             photos_html = ""
             seen_photos = set()
 
-            # دالة تحقق لتصفية الروابط التي تخص الإيموجي والتفاعلات والرموز والأيقونات
             def is_valid_photo_url(url):
                 if not url:
                     return False
@@ -118,14 +129,11 @@ def fetch_all_telegram_posts(channel, max_posts=MAX_POSTS):
                 invalid_keywords = ['t_logo', 'emoji', 'reaction', 'sticker', 'avatar', 'user_photo', 'icon']
                 return not any(kw in url_lower for kw in invalid_keywords)
 
-            # جلب الحاويات المخصصة للصور المرفقة بالمنشور فقط
             photo_wraps = msg.find_all(class_=re.compile(r'tgme_widget_message_photo'))
             for p in photo_wraps:
-                # استبعاد الصورة إذا كانت داخل شريط التفاعلات أو النص أو رأس/تذييل الرسالة
                 if p.find_parent(class_=re.compile(r'tgme_widget_message_reactions|tgme_widget_message_text|tgme_widget_message_user_photo|tgme_widget_message_author')):
                     continue
 
-                # 1) فحص خلفيات الصور CSS (background-image)
                 style = p.get('style', '')
                 img_match = re.search(r'background-image:\s*url\s*\(\s*[\'"]?([^\'")]+)[\'"]?\s*\)', style, re.IGNORECASE)
                 if img_match:
@@ -134,7 +142,6 @@ def fetch_all_telegram_posts(channel, max_posts=MAX_POSTS):
                         seen_photos.add(img_url)
                         photos_html += f'<div class="post-media"><img src="{img_url}" alt="صورة المنشور #{post_id}" loading="lazy" /></div>'
 
-                # 2) فحص وسوم <img> المباشرة داخل حاوية الصورة
                 for img_tag in p.find_all('img'):
                     img_classes = ' '.join(img_tag.get('class', []))
                     if 'emoji' in img_classes or 'reaction' in img_classes:
@@ -144,11 +151,9 @@ def fetch_all_telegram_posts(channel, max_posts=MAX_POSTS):
                         seen_photos.add(src)
                         photos_html += f'<div class="post-media"><img src="{src}" alt="صورة المنشور #{post_id}" loading="lazy" /></div>'
 
-            # 4. استخراج الفيديوهات والتسجيلات الصوتية
+            # 4. الوسائط العالية (فيديو، صوت)
             media_extra_html = ""
             seen_videos = set()
-            
-            # الفيديوهات
             video_tags = msg.find_all('video')
             for v in video_tags:
                 v_src = v.get('src') or (v.find('source').get('src') if v.find('source') else None)
@@ -158,7 +163,6 @@ def fetch_all_telegram_posts(channel, max_posts=MAX_POSTS):
                     poster_attr = f' poster="{v_poster}"' if v_poster else ''
                     media_extra_html += f'<div class="post-media"><video controls preload="metadata"{poster_attr} src="{v_src}"></video></div>'
 
-            # إذا كان مشغل فيديو بدون وسم video مباشر
             if not seen_videos:
                 video_players = msg.find_all(class_=re.compile(r'tgme_widget_message_video|tgme_widget_message_roundvideo'))
                 for vp in video_players:
@@ -167,7 +171,6 @@ def fetch_all_telegram_posts(channel, max_posts=MAX_POSTS):
                         seen_videos.add(v_src)
                         media_extra_html += f'<div class="post-media"><video controls preload="metadata" src="{v_src}"></video></div>'
 
-            # التسجيلات الصوتية
             seen_audios = set()
             audio_tags = msg.find_all('audio')
             for a in audio_tags:
@@ -188,9 +191,14 @@ def fetch_all_telegram_posts(channel, max_posts=MAX_POSTS):
                 continue
 
             time_tag = msg.find('time')
-            date_str = time_tag.get('datetime')[:10] if time_tag and time_tag.get('datetime') else "غير متاح"
+            raw_datetime = time_tag.get('datetime') if time_tag and time_tag.get('datetime') else None
+            
+            # التحقق من صحة صيغة التاريخ لنظام SEO
+            if raw_datetime and len(raw_datetime) >= 10:
+                date_str = raw_datetime[:10]
+            else:
+                date_str = None
 
-            # تركيب محتوى المنشور كاملاً مع النص والوسائط المرفقة فقط
             full_post_html = f'{forwarded_info}{photos_html}{media_extra_html}<div class="post-text-body">{html_content}</div>'
 
             all_posts[post_id] = {
@@ -217,10 +225,13 @@ def fetch_all_telegram_posts(channel, max_posts=MAX_POSTS):
 # === 3. إنتاج صفحات المنشورات الفردية ===
 def generate_single_post_html(post):
     first_line = post['text'].split('\n')[0] if post['text'] else f"منشور رقم {post['id']}"
-    title = first_line[:75].replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;') or f"منشور رقم {post['id']}"
-    description_snippet = post['text'][:160].replace('"', '&quot;').replace('\n', ' ') if post['text'] else title
+    title = clean_text_for_meta(first_line[:80]) or f"منشور رقم {post['id']}"
+    description_snippet = clean_text_for_meta(post['text'][:160]) or title
     file_path = os.path.join(OUTPUT_DIR, f"post-{post['id']}.html")
     
+    date_meta_json = f'"datePublished": "{post["date"]}",' if post['date'] else ""
+    date_display = post['date'] if post['date'] else "غير مؤرخ"
+
     page_html = f"""<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -248,14 +259,12 @@ def generate_single_post_html(post):
     body {{ font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 20px; line-height: 1.8; margin: 0; }}
     .container {{ max-width: 820px; margin: 20px auto; }}
     
-    /* Channel Header */
     .channel-header {{ text-align: center; background: var(--card-bg); padding: 25px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }}
     .channel-logo {{ width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--accent); margin-bottom: 12px; object-fit: cover; }}
     .channel-title {{ font-size: 1.6rem; margin: 0 0 8px 0; color: var(--text); }}
     .channel-desc {{ color: var(--muted); font-size: 0.95rem; max-width: 650px; margin: 0 auto 15px auto; line-height: 1.6; }}
     .channel-actions {{ display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }}
     
-    /* Post Box */
     .post-box {{ background: var(--card-bg); padding: 30px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }}
     .nav-back {{ color: var(--accent); text-decoration: none; font-weight: bold; display: inline-block; margin-bottom: 20px; }}
     .nav-back:hover {{ text-decoration: underline; }}
@@ -287,7 +296,7 @@ def generate_single_post_html(post):
     "@type": "BlogPosting",
     "headline": "{title}",
     "description": "{description_snippet}",
-    "datePublished": "{post['date']}",
+    {date_meta_json}
     "author": {{
       "@type": "Person",
       "name": "{CHANNEL_METADATA['title']}"
@@ -320,7 +329,7 @@ def generate_single_post_html(post):
 
     <article class="post-box">
       <div class="post-meta-bar">
-        <span>تاريخ النشر: <time datetime="{post['date']}">{post['date']}</time></span>
+        <span>تاريخ النشر: <time datetime="{post['date'] or ''}">{date_display}</time></span>
         <span class="badge">منشور #{post['id']}</span>
       </div>
       
@@ -338,7 +347,7 @@ def generate_single_post_html(post):
     with open(file_path, 'w', encoding='utf-8') as f:
         f.write(page_html)
 
-# === 4. إنتاج صفحات الأرشيف المجزأة (Archive Pages) بعرض كامل المحتوى ===
+# === 4. إنتاج صفحات الأرشيف المجزأة ===
 def generate_archive_pages(posts):
     total_posts = len(posts)
     total_pages = math.ceil(total_posts / POSTS_PER_PAGE) or 1
@@ -353,9 +362,9 @@ def generate_archive_pages(posts):
 
         for idx, post in enumerate(page_posts):
             first_line = post['text'].split('\n')[0] if post['text'] else f"منشور رقم {post['id']}"
-            title = first_line[:85].replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;') or f"منشور رقم {post['id']}"
+            title = clean_text_for_meta(first_line[:85]) or f"منشور رقم {post['id']}"
+            date_display = post['date'] if post['date'] else "غير مؤرخ"
 
-            # بناء هيكل البيانات المتقدم JSON-LD للأرشيف
             items_json_ld.append(f"""
             {{
               "@type": "ListItem",
@@ -364,14 +373,13 @@ def generate_archive_pages(posts):
               "name": "{title}"
             }}""")
 
-            # عرض المنشور بالكامل (نص + صور + فيديو + صوت) داخل بطاقة الأرشيف
             items_html += f"""
             <article class="post-card">
               <div class="card-author">
                 <img src="{CHANNEL_METADATA['avatar']}" class="card-avatar" alt="{CHANNEL_METADATA['title']}" loading="lazy">
                 <div>
                   <span class="card-channel">{CHANNEL_METADATA['title']}</span>
-                  <time datetime="{post['date']}" class="card-date">{post['date']} • منشور #{post['id']}</time>
+                  <time datetime="{post['date'] or ''}" class="card-date">{date_display} • منشور #{post['id']}</time>
                 </div>
               </div>
               
@@ -391,7 +399,6 @@ def generate_archive_pages(posts):
             </article>
             """
 
-        # روابط التصفح بين صفحات الأرشيف (Pagination)
         pagination_html = '<nav class="pagination" aria-label="صفحات الأرشيف">'
         if page_num > 1:
             prev_file = "archive.html" if page_num == 2 else f"archive-page-{page_num - 1}.html"
@@ -409,7 +416,6 @@ def generate_archive_pages(posts):
 
         file_name = "archive.html" if page_num == 1 else f"archive-page-{page_num}.html"
 
-        # إشارات العلاقة بين الصفحات المترابطة للـ SEO
         rel_links = ""
         if page_num > 1:
             prev_href = "archive.html" if page_num == 2 else f"archive-page-{page_num - 1}.html"
@@ -417,22 +423,25 @@ def generate_archive_pages(posts):
         if page_num < total_pages:
             rel_links += f'\n  <link rel="next" href="{SITE_URL}/archive-page-{page_num + 1}.html">'
 
+        # ربط Canonical صحيح للصفحة الأولى و index.html
+        canonical_url = f"{SITE_URL}/" if page_num == 1 else f"{SITE_URL}/{file_name}"
+
         archive_html = f"""<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>أرشيف منشورات القناة (صفحة {page_num}) | {CHANNEL_METADATA['title']}</title>
-  <meta name="description" content="{CHANNEL_METADATA['description']}">
-  <link rel="canonical" href="{SITE_URL}/{file_name}">{rel_links}
+  <meta name="description" content="{clean_text_for_meta(CHANNEL_METADATA['description'])}">
+  <link rel="canonical" href="{canonical_url}">{rel_links}
   
   <!-- Open Graph & Social SEO -->
   <meta property="og:site_name" content="{CHANNEL_METADATA['title']}">
   <meta property="og:type" content="website">
   <meta property="og:title" content="{CHANNEL_METADATA['title']} - الأرشيف الرسمي (صفحة {page_num})">
-  <meta property="og:description" content="{CHANNEL_METADATA['description']}">
+  <meta property="og:description" content="{clean_text_for_meta(CHANNEL_METADATA['description'])}">
   <meta property="og:image" content="{CHANNEL_METADATA['avatar']}">
-  <meta property="og:url" content="{SITE_URL}/{file_name}">
+  <meta property="og:url" content="{canonical_url}">
   <meta property="og:locale" content="ar_SA">
 
   <style>
@@ -440,7 +449,6 @@ def generate_archive_pages(posts):
     body {{ font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 20px; margin: 0; line-height: 1.6; }}
     .container {{ max-width: 850px; margin: 0 auto; }}
     
-    /* Channel Header */
     .channel-header {{ text-align: center; background: var(--card-bg); padding: 30px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 30px; margin-top: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }}
     .channel-logo {{ width: 95px; height: 95px; border-radius: 50%; border: 3px solid var(--accent); margin-bottom: 12px; object-fit: cover; }}
     .channel-title {{ font-size: 1.8rem; margin: 0 0 10px 0; color: var(--text); }}
@@ -452,7 +460,6 @@ def generate_archive_pages(posts):
     .btn-secondary {{ background: #334155; color: var(--text); border: 1px solid var(--border); }}
     .btn:hover {{ opacity: 0.9; transform: translateY(-1px); }}
 
-    /* Cards Style */
     .post-card {{ background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }}
     .card-author {{ display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }}
     .card-avatar {{ width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 1px solid var(--accent); }}
@@ -462,7 +469,6 @@ def generate_archive_pages(posts):
     .card-title a {{ color: var(--text); text-decoration: none; }}
     .card-title a:hover {{ color: var(--accent); text-decoration: underline; }}
     
-    /* Full Content Inside Card */
     .card-full-content {{ font-size: 1.05rem; color: #e2e8f0; line-height: 1.8; margin-bottom: 20px; word-break: break-word; }}
     .card-full-content a {{ color: var(--accent); text-decoration: underline; }}
     .forwarded-badge {{ background: #1e3a8a; color: #93c5fd; padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; margin-bottom: 15px; border-right: 4px solid var(--accent); }}
@@ -480,7 +486,6 @@ def generate_archive_pages(posts):
     .tg-link {{ color: var(--muted); text-decoration: none; font-size: 0.85rem; }}
     .tg-link:hover {{ color: var(--text); }}
 
-    /* Pagination */
     .pagination {{ display: flex; justify-content: center; gap: 8px; margin: 40px 0; flex-wrap: wrap; }}
     .page-link {{ background: var(--card-bg); color: var(--text); padding: 8px 14px; border-radius: 6px; text-decoration: none; border: 1px solid var(--border); font-size: 0.9rem; }}
     .page-link.active {{ background: var(--accent); color: #0f172a; font-weight: bold; border-color: var(--accent); }}
@@ -519,20 +524,27 @@ def generate_archive_pages(posts):
         with open(file_name, 'w', encoding='utf-8') as f:
             f.write(archive_html)
             
-        # نسخ الصفحة الأولى كصفحة رئيسية index.html لعمل الرابط مباشرة على GitHub Pages
         if page_num == 1:
             with open("index.html", 'w', encoding='utf-8') as f_idx:
                 f_idx.write(archive_html)
 
 # === 5. إنشاء خريطة الموقع Sitemap وملف Robots.txt ===
 def generate_sitemap_and_robots(posts):
-    # sitemap.xml
+    total_pages = math.ceil(len(posts) / POSTS_PER_PAGE) or 1
+
     xml_entries = [
         f"  <url>\n    <loc>{SITE_URL}/</loc>\n    <priority>1.0</priority>\n    <changefreq>daily</changefreq>\n  </url>",
         f"  <url>\n    <loc>{SITE_URL}/archive.html</loc>\n    <priority>0.9</priority>\n    <changefreq>daily</changefreq>\n  </url>"
     ]
+    
+    # إضافة صفحات الأرشيف المجزأة للخريطة
+    for p_num in range(2, total_pages + 1):
+        xml_entries.append(f"  <url>\n    <loc>{SITE_URL}/archive-page-{p_num}.html</loc>\n    <priority>0.7</priority>\n    <changefreq>weekly</changefreq>\n  </url>")
+
+    # إضافة المقالات الفردية مع فحص التاريخ لتجنب أخطاء Google Search Console
     for p in posts:
-        xml_entries.append(f"  <url>\n    <loc>{SITE_URL}/posts/post-{p['id']}.html</loc>\n    <lastmod>{p['date']}</lastmod>\n    <priority>0.8</priority>\n  </url>")
+        lastmod_tag = f"\n    <lastmod>{p['date']}</lastmod>" if p.get('date') else ""
+        xml_entries.append(f"  <url>\n    <loc>{SITE_URL}/posts/post-{p['id']}.html</loc>{lastmod_tag}\n    <priority>0.8</priority>\n  </url>")
     
     xml_content = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "\n".join(xml_entries) + '\n</urlset>'
     with open("sitemap.xml", 'w', encoding='utf-8') as f:
