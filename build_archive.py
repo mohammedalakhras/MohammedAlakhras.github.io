@@ -184,8 +184,9 @@ def fetch_all_telegram_posts(channel, max_posts=MAX_POSTS):
                 continue
 
             time_tag = msg.find('time')
-            date_str = time_tag.get('datetime')[:10] if time_tag and time_tag.get('datetime') else "غير متاح"
-
+            date_str = (time_tag.get('datetime')[:10] 
+            if time_tag and time_tag.get('datetime') 
+            else "2026-01-01")
             full_post_html = f'{forwarded_info}{photos_html}{media_extra_html}<div class="post-text-body">{html_content}</div>'
 
             all_posts[post_id] = {
@@ -519,19 +520,45 @@ def generate_archive_pages(posts):
 
 # === 5. إنشاء خريطة الموقع Sitemap وملف Robots.txt ===
 def generate_sitemap_and_robots(posts, total_pages):
+    # آخر تاريخ نشر فعلي (يُستخدم كـ lastmod لصفحات القوائم/الأرشيف بدل تركها بدون تاريخ)
+    latest_post_date = posts[0]['date'] if posts else time.strftime('%Y-%m-%d')
+    today = time.strftime('%Y-%m-%d')
+
     xml_entries = [
-        f"  <url>\n    <loc>{SITE_URL}/</loc>\n    <priority>1.0</priority>\n    <changefreq>daily</changefreq>\n  </url>"
+        # الصفحة الرئيسية (الإنكليزية) + إشارات hreflang للنسخة العربية المقابلة
+        (f"  <url>\n    <loc>{SITE_URL}/</loc>\n    <lastmod>{today}</lastmod>\n"
+         f"    <xhtml:link rel=\"alternate\" hreflang=\"en\" href=\"{SITE_URL}/\" />\n"
+         f"    <xhtml:link rel=\"alternate\" hreflang=\"ar\" href=\"{SITE_URL}/ar.html\" />\n"
+         f"    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"{SITE_URL}/\" />\n"
+         f"    <priority>1.0</priority>\n    <changefreq>daily</changefreq>\n  </url>"),
+        # النسخة العربية من الصفحة الرئيسية
+        (f"  <url>\n    <loc>{SITE_URL}/ar.html</loc>\n    <lastmod>{today}</lastmod>\n"
+         f"    <xhtml:link rel=\"alternate\" hreflang=\"en\" href=\"{SITE_URL}/\" />\n"
+         f"    <xhtml:link rel=\"alternate\" hreflang=\"ar\" href=\"{SITE_URL}/ar.html\" />\n"
+         f"    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"{SITE_URL}/\" />\n"
+         f"    <priority>1.0</priority>\n    <changefreq>daily</changefreq>\n  </url>"),
+        # صفحة الأرشيف الأولى (archive.html) - كانت مفقودة سابقاً من الـ sitemap
+        (f"  <url>\n    <loc>{SITE_URL}/archive.html</loc>\n    <lastmod>{latest_post_date}</lastmod>\n"
+         f"    <priority>0.9</priority>\n    <changefreq>daily</changefreq>\n  </url>"),
     ]
-    
+
     # إضافة صفحات الأرشيف المجزأة في Sitemap
     for p in range(2, total_pages + 1):
-        xml_entries.append(f"  <url>\n    <loc>{SITE_URL}/archive-page-{p}.html</loc>\n    <priority>0.8</priority>\n    <changefreq>weekly</changefreq>\n  </url>")
+        xml_entries.append(
+            f"  <url>\n    <loc>{SITE_URL}/archive-page-{p}.html</loc>\n    <lastmod>{latest_post_date}</lastmod>\n"
+            f"    <priority>0.8</priority>\n    <changefreq>weekly</changefreq>\n  </url>"
+        )
 
     # إضافة صفحات المنشورات
     for p in posts:
         xml_entries.append(f"  <url>\n    <loc>{SITE_URL}/posts/post-{p['id']}.html</loc>\n    <lastmod>{p['date']}</lastmod>\n    <priority>0.7</priority>\n  </url>")
-    
-    xml_content = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "\n".join(xml_entries) + '\n</urlset>'
+
+    xml_content = (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
+        'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
+        + "\n".join(xml_entries) + '\n</urlset>'
+    )
     with open("sitemap.xml", 'w', encoding='utf-8') as f:
         f.write(xml_content)
 

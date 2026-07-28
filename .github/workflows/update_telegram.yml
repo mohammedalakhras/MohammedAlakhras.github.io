@@ -5,15 +5,20 @@ on:
     - cron: '0 0 * * *' # يعمل تلقائياً كل يوم الساعة 12 منتصف الليل
   workflow_dispatch: # يتيح لك تشغيله يدوياً بنقرة زر من GitHub
 
+# مطلوب صراحةً لأن بعض المستودعات تُنشأ افتراضياً بصلاحية قراءة فقط لـ GITHUB_TOKEN،
+# ما يمنع خطوة "git push" من العمل حتى لو نجحت بقية الخطوات
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.x'
 
