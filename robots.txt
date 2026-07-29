@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
+Sitemap: https://mohammedalakhras.github.io/sitemap.txt
 Sitemap: https://mohammedalakhras.github.io/sitemap.xml
