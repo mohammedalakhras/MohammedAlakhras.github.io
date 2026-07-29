@@ -519,128 +519,76 @@ def generate_archive_pages(posts):
             
     return total_pages
 
-# === 5. إنشاء خريطة الموقع Sitemap وملف Robots.txt ===
-# def generate_sitemap_and_robots(posts, total_pages):
-#     # آخر تاريخ نشر فعلي (يُستخدم كـ lastmod لصفحات القوائم/الأرشيف بدل تركها بدون تاريخ)
-#     latest_post_date = posts[0]['date'] if posts else time.strftime('%Y-%m-%d')
-#     today = time.strftime('%Y-%m-%d')
-
-#     xml_entries = [
-#         # الصفحة الرئيسية (الإنكليزية) + إشارات hreflang للنسخة العربية المقابلة
-#         (f"  <url>\n    <loc>{SITE_URL}/</loc>\n    <lastmod>{today}</lastmod>\n"
-#          f"    <xhtml:link rel=\"alternate\" hreflang=\"en\" href=\"{SITE_URL}/\" />\n"
-#          f"    <xhtml:link rel=\"alternate\" hreflang=\"ar\" href=\"{SITE_URL}/ar.html\" />\n"
-#          f"    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"{SITE_URL}/\" />\n"
-#          f"    <priority>1.0</priority>\n    <changefreq>daily</changefreq>\n  </url>"),
-#         # النسخة العربية من الصفحة الرئيسية
-#         (f"  <url>\n    <loc>{SITE_URL}/ar.html</loc>\n    <lastmod>{today}</lastmod>\n"
-#          f"    <xhtml:link rel=\"alternate\" hreflang=\"en\" href=\"{SITE_URL}/\" />\n"
-#          f"    <xhtml:link rel=\"alternate\" hreflang=\"ar\" href=\"{SITE_URL}/ar.html\" />\n"
-#          f"    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"{SITE_URL}/\" />\n"
-#          f"    <priority>1.0</priority>\n    <changefreq>daily</changefreq>\n  </url>"),
-#         # صفحة الأرشيف الأولى (archive.html) - كانت مفقودة سابقاً من الـ sitemap
-#         (f"  <url>\n    <loc>{SITE_URL}/archive.html</loc>\n    <lastmod>{latest_post_date}</lastmod>\n"
-#          f"    <priority>0.9</priority>\n    <changefreq>daily</changefreq>\n  </url>"),
-#     ]
-
-#     # إضافة صفحات الأرشيف المجزأة في Sitemap
-#     for p in range(2, total_pages + 1):
-#         xml_entries.append(
-#             f"  <url>\n    <loc>{SITE_URL}/archive-page-{p}.html</loc>\n    <lastmod>{latest_post_date}</lastmod>\n"
-#             f"    <priority>0.8</priority>\n    <changefreq>weekly</changefreq>\n  </url>"
-#         )
-
-#     # إضافة صفحات المنشورات
-#     for p in posts:
-#         xml_entries.append(f"  <url>\n    <loc>{SITE_URL}/posts/post-{p['id']}.html</loc>\n    <lastmod>{p['date']}</lastmod>\n    <priority>0.7</priority>\n  </url>")
-
-#     xml_content = (
-#         '<?xml version="1.0" encoding="UTF-8"?>\n'
-#         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
-#         'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
-#         + "\n".join(xml_entries) + '\n</urlset>'
-#     )
-#     with open("sitemap.xml", 'w', encoding='utf-8') as f:
-#         f.write(xml_content)
-
-#     robots_content = f"User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n"
-#     with open("robots.txt", 'w', encoding='utf-8') as f:
-#         f.write(robots_content)
-
-
-
-# === 5. إنشاء خريطة الموقع Sitemap وملف Robots.txt بطريقة معيارية ومضمونة ===
+# === 5. إنشاء خريطة الموقع Sitemap (نص عادي + XML احتياطي) وملف Robots.txt ===
 def generate_sitemap_and_robots(posts, total_pages):
     latest_post_date = posts[0]['date'] if posts else time.strftime('%Y-%m-%d')
     today = time.strftime('%Y-%m-%d')
 
+    # قائمة موحّدة بكل الروابط لتوليد sitemap.txt و sitemap.xml من نفس المصدر
+    all_urls = [f"{SITE_URL}/", f"{SITE_URL}/ar.html", f"{SITE_URL}/archive.html"]
+    for p in range(2, total_pages + 1):
+        all_urls.append(f"{SITE_URL}/archive-page-{p}.html")
+    for p in posts:
+        all_urls.append(f"{SITE_URL}/posts/post-{p['id']}.html")
+
+    # 1) sitemap.txt: الصيغة الأساسية المُعتمَدة الآن — رابط واحد بكل سطر، بدون أي وسوم XML.
+    #    هذه الصيغة مدعومة رسمياً من غوغل (انظر Google Search Central: Build and Submit a Sitemap)
+    #    وتتفادى بشكل كامل مشكلة "تعذر جلب/قراءة الملف" التي واجهناها مع Content-Type: application/xml
+    with open("sitemap.txt", "w", encoding="utf-8") as f:
+        f.write("\n".join(all_urls) + "\n")
+
+    # 2) sitemap.xml: نُبقيه كنسخة احتياطية/لمحركات بحث أخرى (Bing/Yandex)، لكنه لم يعد المُرسَل لـ GSC
     SITEMAP_NS = "http://www.sitemaps.org/schemas/sitemap/0.9"
     XHTML_NS = "http://www.w3.org/1999/xhtml"
-
-    # 1. تسجيل مساحات الأسماء
     ET.register_namespace('', SITEMAP_NS)
     ET.register_namespace('xhtml', XHTML_NS)
-
-    # 2. إنشاء العنصر الرئيسي (الجذر) باستخدام الـ URI لتتولى المكتبة إضافة خاصية xmlns مرة واحدة فقط
     urlset = ET.Element(f"{{{SITEMAP_NS}}}urlset")
 
     def add_url_entry(loc_url, lastmod_date, priority_val="0.7", freq_val=None, hreflang_dict=None):
         url_elem = ET.SubElement(urlset, f"{{{SITEMAP_NS}}}url")
-        
         loc_elem = ET.SubElement(url_elem, f"{{{SITEMAP_NS}}}loc")
         loc_elem.text = loc_url
-        
         lastmod_elem = ET.SubElement(url_elem, f"{{{SITEMAP_NS}}}lastmod")
         lastmod_elem.text = lastmod_date
-
         if hreflang_dict:
             for lang_code, target_url in hreflang_dict.items():
                 ET.SubElement(url_elem, f"{{{XHTML_NS}}}link", {
-                    "rel": "alternate",
-                    "hreflang": lang_code,
-                    "href": target_url
+                    "rel": "alternate", "hreflang": lang_code, "href": target_url
                 })
-
         priority_elem = ET.SubElement(url_elem, f"{{{SITEMAP_NS}}}priority")
         priority_elem.text = priority_val
-
         if freq_val:
             freq_elem = ET.SubElement(url_elem, f"{{{SITEMAP_NS}}}changefreq")
             freq_elem.text = freq_val
 
-    # أ) الصفحة الرئيسية (الإنكليزية والعربية)
-    hreflangs_main = {
-        "en": f"{SITE_URL}/",
-        "ar": f"{SITE_URL}/ar.html",
-        "x-default": f"{SITE_URL}/"
-    }
+    hreflangs_main = {"en": f"{SITE_URL}/", "ar": f"{SITE_URL}/ar.html", "x-default": f"{SITE_URL}/"}
     add_url_entry(f"{SITE_URL}/", today, priority_val="1.0", freq_val="daily", hreflang_dict=hreflangs_main)
     add_url_entry(f"{SITE_URL}/ar.html", today, priority_val="1.0", freq_val="daily", hreflang_dict=hreflangs_main)
-
-    # ب) صفحات الأرشيف (Pagination)
     add_url_entry(f"{SITE_URL}/archive.html", latest_post_date, priority_val="0.9", freq_val="daily")
     for p in range(2, total_pages + 1):
         add_url_entry(f"{SITE_URL}/archive-page-{p}.html", latest_post_date, priority_val="0.8", freq_val="weekly")
-
-    # جـ) صفحات المنشورات الفردية
     for p in posts:
         add_url_entry(f"{SITE_URL}/posts/post-{p['id']}.html", p['date'], priority_val="0.7")
 
-    # 3. حفظ ملف sitemap.xml مع ترويسة XML سليمة
     tree = ET.ElementTree(urlset)
     if hasattr(ET, 'indent'):
         ET.indent(tree, space="  ")
-
     with open("sitemap.xml", "wb") as f:
         f.write(b'<?xml version="1.0" encoding="UTF-8"?>\n')
         tree.write(f, encoding="utf-8", xml_declaration=False)
 
-    # 4. إنشاء ملف robots.txt
-    robots_content = f"User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n"
+    # 3) robots.txt: sitemap.txt أولاً (هو المُرسَل فعلياً لـ Search Console)، و sitemap.xml كنسخة احتياطية
+    robots_content = (
+        "User-agent: *\n"
+        "Allow: /\n\n"
+        f"Sitemap: {SITE_URL}/sitemap.txt\n"
+        f"Sitemap: {SITE_URL}/sitemap.xml\n"
+    )
     with open("robots.txt", "w", encoding="utf-8") as f:
         f.write(robots_content)
 
-    print(f"✅ تم إنشاء sitemap.xml و robots.txt بنجاح دون أي أخطاء XML.")
+    print(f"✅ تم إنشاء sitemap.txt (الأساسي) و sitemap.xml (احتياطي) و robots.txt بنجاح — {len(all_urls)} رابط.")
+
 # === 6. التشغيل التنفيذي ===
 if __name__ == "__main__":
     posts = fetch_all_telegram_posts(CHANNEL_USERNAME)
